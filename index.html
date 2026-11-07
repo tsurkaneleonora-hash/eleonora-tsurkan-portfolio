@@ -265,6 +265,10 @@
     .project-detail-links { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 10px; }
     .project-detail-links a { color: var(--cyan); font-size: 12px; font-weight: 700; text-decoration: none; }
     .project-detail-links a:hover { color: var(--text); }
+    .project-screenshots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
+    .project-screenshots figure { min-width: 0; margin: 0; }
+    .project-screenshots img { width: 100%; aspect-ratio: 16 / 9; display: block; border: 1px solid var(--line); border-radius: 8px; object-fit: cover; object-position: top; }
+    .project-screenshots figcaption { margin-top: 6px; color: var(--muted); font-size: 11px; }
     .contact {
       display: flex;
       align-items: center;
@@ -411,6 +415,48 @@
         </div>
         <div class="projects">
           <article class="project project-featured">
+            <div class="project-meta"><span>СТАТИЧЕСКИЙ САЙТ</span><span>AI-ЧАТ ПОДДЕРЖКИ</span></div>
+            <div>
+              <h3>SeverModul</h3>
+              <p>Сайт модульных домов с каталогом проектов, калькулятором и AI-чатом поддержки.</p>
+              <div class="project-tech" aria-label="Технологии проекта">
+                <span>HTML</span><span>CSS</span><span>JavaScript</span><span>TypeScript</span><span>PostgreSQL</span><span>Neon</span><span>Groq</span><span>Netlify</span>
+              </div>
+              <div class="project-actions">
+                <a class="button" href="https://moduldoma.netlify.app/" target="_blank" rel="noopener noreferrer">Открыть демо <span aria-hidden="true">↗</span></a>
+                <a class="button button-secondary" href="https://github.com/tsurkaneleonora-hash/SeverModul" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+              </div>
+              <button class="button button-secondary project-details-toggle" type="button" aria-expanded="false" aria-controls="severmodul-details">Подробнее о проекте <span aria-hidden="true">⌄</span></button>
+              <section class="project-details" id="severmodul-details" aria-hidden="true" aria-label="Описание проекта SeverModul">
+                <div class="project-details-inner">
+                  <div class="project-details-content">
+                    <h4>SeverModul</h4>
+                    <p>Демонстрационный сайт модульных домов: посетитель может посмотреть проекты, воспользоваться калькулятором и задать вопрос AI-консультанту.</p>
+                    <h4>Технологии</h4>
+                    <p>Статическая часть создана на HTML, CSS и JavaScript. Чат обращается к серверной функции на TypeScript (Neon Functions), которая ищет материалы в базе знаний PostgreSQL на Neon. Groq API используется для подготовки ответов на основе найденных материалов.</p>
+                    <h4>Примеры интерфейса</h4>
+                    <div class="project-screenshots">
+                      <figure>
+                        <img src="SeverModul/screenshots/main-chat.png" alt="Главная страница сайта SeverModul с открытым AI-чатом" loading="lazy">
+                        <figcaption>Главная страница сайта и AI-чат поддержки</figcaption>
+                      </figure>
+                      <figure>
+                        <img src="SeverModul/screenshots/ai-delivery-answer.png" alt="Ответ AI-консультанта на вопрос о доставке" loading="lazy">
+                        <figcaption>Пример ответа AI-консультанта на вопрос о доставке</figcaption>
+                      </figure>
+                    </div>
+                    <h4>Примечание</h4>
+                    <p>Содержимое базы знаний демонстрационное и требует проверки; ответы не следует воспринимать как подтверждённые условия реальной компании.</p>
+                    <div class="project-detail-links">
+                      <a href="https://moduldoma.netlify.app/" target="_blank" rel="noopener noreferrer">Демо-сайт <span aria-hidden="true">↗</span></a>
+                      <a href="https://github.com/tsurkaneleonora-hash/SeverModul" target="_blank" rel="noopener noreferrer">GitHub-репозиторий <span aria-hidden="true">↗</span></a>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </article>
+          <article class="project project-featured">
             <div class="project-meta"><span>ВЕБ-ПРИЛОЖЕНИЕ</span><span>ANDROID APK</span></div>
             <div>
               <h3>FinanceTreker</h3>
@@ -476,18 +522,18 @@
     const portrait = document.querySelector("#portrait");
     const photoPicker = document.querySelector("#photo-picker");
     const photoFile = document.querySelector("#photo-file");
-    const projectDetailsToggle = document.querySelector(".project-details-toggle");
-    const projectDetails = document.querySelector("#finance-tracker-details");
-
     photoPicker.addEventListener("click", () => photoFile.click());
-    projectDetailsToggle.addEventListener("click", () => {
-      const isExpanded = projectDetailsToggle.getAttribute("aria-expanded") === "true";
-      projectDetailsToggle.setAttribute("aria-expanded", String(!isExpanded));
-      projectDetailsToggle.innerHTML = isExpanded
-        ? 'Подробнее о проекте <span aria-hidden="true">⌄</span>'
-        : 'Скрыть описание <span aria-hidden="true">⌃</span>';
-      projectDetails.setAttribute("aria-hidden", String(isExpanded));
-      projectDetails.classList.toggle("is-open", !isExpanded);
+    document.querySelectorAll(".project-details-toggle").forEach((toggle) => {
+      const details = document.getElementById(toggle.getAttribute("aria-controls"));
+      toggle.addEventListener("click", () => {
+        const isExpanded = toggle.getAttribute("aria-expanded") === "true";
+        toggle.setAttribute("aria-expanded", String(!isExpanded));
+        toggle.innerHTML = isExpanded
+          ? 'Подробнее о проекте <span aria-hidden="true">⌄</span>'
+          : 'Скрыть описание <span aria-hidden="true">⌃</span>';
+        details.setAttribute("aria-hidden", String(isExpanded));
+        details.classList.toggle("is-open", !isExpanded);
+      });
     });
     photoFile.addEventListener("change", () => {
       const file = photoFile.files[0];

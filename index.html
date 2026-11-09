@@ -76,11 +76,8 @@
 
     .brand-name span { color: var(--cyan); }
     .navigation { display: flex; align-items: center; gap: clamp(18px, 3.2vw, 38px); }
-    .navigation a, .language { color: #aab4c5; font-size: 12px; font-weight: 700; text-decoration: none; transition: color 150ms ease; }
-    .navigation a:hover, .language:hover { color: var(--text); }
-    .header-tools { display: flex; align-items: center; gap: 15px; }
-    .language { display: flex; align-items: center; gap: 7px; }
-    .language-current { padding: 2px 8px; border-radius: 999px; background: linear-gradient(110deg, var(--blue), var(--purple)); color: white; }
+    .navigation a { color: #aab4c5; font-size: 12px; font-weight: 700; text-decoration: none; transition: color 150ms ease; }
+    .navigation a:hover { color: var(--text); }
 
     .hero {
       min-height: 610px;
@@ -267,8 +264,17 @@
     .project-detail-links a:hover { color: var(--text); }
     .project-screenshots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
     .project-screenshots figure { min-width: 0; margin: 0; }
-    .project-screenshots img { width: 100%; aspect-ratio: 16 / 9; display: block; border: 1px solid var(--line); border-radius: 8px; object-fit: cover; object-position: top; }
+    .project-screenshots img { width: 100%; aspect-ratio: 16 / 9; display: block; border: 1px solid var(--line); border-radius: 8px; object-fit: cover; object-position: top; cursor: zoom-in; transition: filter 150ms ease, border-color 150ms ease; }
+    .project-screenshots img:hover { filter: brightness(1.08); border-color: #52617a; }
+    .project-screenshots img:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
     .project-screenshots figcaption { margin-top: 6px; color: var(--muted); font-size: 11px; }
+    .image-viewer { position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; padding: 64px 24px 24px; border: 0; background: transparent; overflow: hidden; }
+    .image-viewer[open] { display: grid; place-items: center; }
+    .image-viewer::backdrop { background: rgb(5 8 14 / 84%); backdrop-filter: blur(5px); }
+    .image-viewer img { display: block; max-width: min(100%, 1500px); max-height: 100%; border: 1px solid #354154; border-radius: 12px; box-shadow: 0 24px 80px rgb(0 0 0 / 55%); object-fit: contain; }
+    .image-viewer-close { position: absolute; top: 20px; right: 24px; width: 42px; height: 42px; display: grid; place-items: center; border: 1px solid #354154; border-radius: 50%; background: #151b27; color: var(--text); font: inherit; font-size: 26px; line-height: 1; cursor: pointer; }
+    .image-viewer-close:hover { background: #232b39; }
+    .image-viewer-close:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
     .contact {
       display: flex;
       align-items: center;
@@ -292,7 +298,6 @@
       .shell { width: min(100% - 36px, 680px); }
       .header { min-height: 66px; }
       .navigation { gap: 17px; }
-      .header-tools { display: none; }
       .hero { min-height: 0; grid-template-columns: 1fr; gap: 37px; padding-block: 52px 65px; }
       .hero-copy { max-width: 590px; }
       .hero-topline { margin-bottom: 23px; }
@@ -344,9 +349,6 @@
         <a href="#projects">Проекты</a>
         <a href="#contacts">Контакты</a>
       </nav>
-      <div class="header-tools" aria-label="Язык страницы">
-        <span class="language"><span class="language-current">RU</span> EN</span>
-      </div>
     </header>
 
     <main id="top">
@@ -398,7 +400,7 @@
           <div class="skill-group">
             <h3>TOOLS</h3>
             <div class="skill-items">
-              <span class="skill">Git</span><span class="skill">GitHub</span><span class="skill">VS Code</span><span class="skill">Codex</span><span class="skill">Replit</span><span class="skill">Google AI Studio</span>
+              <span class="skill">Git</span><span class="skill">GitHub</span><span class="skill">VS Code</span><span class="skill">Codex</span><span class="skill">Replit</span><span class="skill">Google AI Studio</span><span class="skill">Qwen</span><span class="skill">Bolt</span><span class="skill">GPT</span><span class="skill">Zcode</span><span class="skill">Kimi</span>
             </div>
           </div>
           <div class="skill-group">
@@ -541,11 +543,49 @@
     </footer>
   </div>
 
+  <dialog class="image-viewer" aria-label="Просмотр скриншота">
+    <button class="image-viewer-close" type="button" aria-label="Закрыть изображение">×</button>
+    <img alt="">
+  </dialog>
+
   <script>
     const portrait = document.querySelector("#portrait");
     const photoPicker = document.querySelector("#photo-picker");
     const photoFile = document.querySelector("#photo-file");
+    const imageViewer = document.querySelector(".image-viewer");
+    const imageViewerImage = imageViewer.querySelector("img");
+    const imageViewerClose = imageViewer.querySelector(".image-viewer-close");
+    let activeScreenshot = null;
+
     photoPicker.addEventListener("click", () => photoFile.click());
+    document.querySelectorAll(".project-screenshots img").forEach((image) => {
+      image.tabIndex = 0;
+      image.setAttribute("role", "button");
+      image.setAttribute("aria-label", `Открыть изображение: ${image.alt}`);
+
+      const openImage = () => {
+        activeScreenshot = image;
+        imageViewerImage.src = image.currentSrc || image.src;
+        imageViewerImage.alt = image.alt;
+        imageViewer.showModal();
+      };
+
+      image.addEventListener("click", openImage);
+      image.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          openImage();
+        }
+      });
+    });
+    imageViewerClose.addEventListener("click", () => imageViewer.close());
+    imageViewer.addEventListener("click", (event) => {
+      if (event.target === imageViewer) imageViewer.close();
+    });
+    imageViewer.addEventListener("close", () => {
+      activeScreenshot?.focus();
+      activeScreenshot = null;
+    });
     document.querySelectorAll(".project-details-toggle").forEach((toggle) => {
       const details = document.getElementById(toggle.getAttribute("aria-controls"));
       toggle.addEventListener("click", () => {

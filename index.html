@@ -302,6 +302,7 @@
     }
     @media (max-width: 520px) {
       .shell { width: min(100% - 32px, 420px); }
+      .header { flex-wrap: wrap; }
       .brand { gap: 8px; font-size: 12px; }
       .brand-mark { width: 30px; border-radius: 9px; }
       .navigation { gap: 12px; }
@@ -321,6 +322,7 @@
       .skill-list { grid-template-columns: 1fr; }
       .projects { grid-template-columns: 1fr; }
       .project { min-height: 145px; }
+      .project-screenshots { grid-template-columns: 1fr; }
       .contact { align-items: flex-start; flex-direction: column; padding: 21px; }
       .footer { align-items: flex-start; flex-direction: column; justify-content: center; padding-block: 15px; }
     }
@@ -418,9 +420,9 @@
             <div class="project-meta"><span>СТАТИЧЕСКИЙ САЙТ</span><span>AI-ЧАТ ПОДДЕРЖКИ</span></div>
             <div>
               <h3>SeverModul</h3>
-              <p>Сайт модульных домов с каталогом проектов, калькулятором и AI-чатом поддержки.</p>
+              <p>Сайт модульных домов с каталогом, калькулятором, AI-чатом с историей диалогов и уведомлениями о заявках в Telegram.</p>
               <div class="project-tech" aria-label="Технологии проекта">
-                <span>HTML</span><span>CSS</span><span>JavaScript</span><span>TypeScript</span><span>PostgreSQL</span><span>Neon</span><span>Groq</span><span>Netlify</span>
+                <span>HTML</span><span>CSS</span><span>JavaScript</span><span>TypeScript</span><span>Neon PostgreSQL</span><span>Neon Functions</span><span>Groq API</span><span>Telegram Bot API</span><span>Netlify</span>
               </div>
               <div class="project-actions">
                 <a class="button" href="https://moduldoma.netlify.app/" target="_blank" rel="noopener noreferrer">Открыть демо <span aria-hidden="true">↗</span></a>
@@ -431,9 +433,15 @@
                 <div class="project-details-inner">
                   <div class="project-details-content">
                     <h4>SeverModul</h4>
-                    <p>Демонстрационный сайт модульных домов: посетитель может посмотреть проекты, воспользоваться калькулятором и задать вопрос AI-консультанту.</p>
+                    <p>Демонстрационный сайт модульных домов. Посетитель может изучить каталог, рассчитать стоимость, задать вопрос AI-консультанту или отправить заявку. Для администраторов предусмотрена отдельная панель управления.</p>
                     <h4>Технологии</h4>
-                    <p>Статическая часть создана на HTML, CSS и JavaScript. Чат обращается к серверной функции на TypeScript (Neon Functions), которая ищет материалы в базе знаний PostgreSQL на Neon. Groq API используется для подготовки ответов на основе найденных материалов.</p>
+                    <p>Интерфейс реализован на HTML, CSS и JavaScript и размещён на Netlify. Чат и формы обращаются к серверной функции на TypeScript (Neon Functions). Она работает с PostgreSQL на Neon; Groq API используется для генерации ответов на основе найденных в базе знаний материалов. Поиск по базе знаний не описывается как векторный или семантический.</p>
+                    <h4>Диалоги, заявки и Telegram</h4>
+                    <p>История сообщений и заявки хранятся в PostgreSQL. После отправки формы сведения о заявке сохраняются в базе, а настроенный Telegram Bot API отправляет уведомление. Доставка тестовой заявки в Telegram подтверждена; на скриншоте скрыты идентификатор, имя и контакт.</p>
+                    <p>Важно: на момент обновления публичная ветка <code>master</code> указанного GitHub-репозитория ещё не содержит обработчик Telegram (проверка сервиса в ней возвращает <code>not_configured</code>). Интеграция проверена в локальной тестовой сборке; перед оценкой кода её нужно синхронизировать с публичным репозиторием.</p>
+                    <h4>Административная панель</h4>
+                    <p>В закрытой панели администратор может просматривать заявки клиентов и связанные с ними диалоги, просматривать переписки с AI-консультантом, а также искать, добавлять и редактировать записи базы знаний. Для действий с заявками можно менять статус; удаления записей базы знаний в панели нет.</p>
+                    <p>Доступ проверяется сервером по паролю и подписанной ограниченной по времени сессии. Используются HttpOnly, Secure и SameSite=Strict cookie, проверка источника запроса и CSRF-токен для изменений, а попытки входа ограничиваются. Для включения панели нужны серверные переменные DATABASE_URL, ADMIN_PASSWORD и ADMIN_SESSION_SECRET; их значения не хранятся в статическом сайте.</p>
                     <h4>Примеры интерфейса</h4>
                     <div class="project-screenshots">
                       <figure>
@@ -444,9 +452,17 @@
                         <img src="SeverModul/screenshots/ai-delivery-answer.png" alt="Ответ AI-консультанта на вопрос о доставке" loading="lazy">
                         <figcaption>Пример ответа AI-консультанта на вопрос о доставке</figcaption>
                       </figure>
+                      <figure>
+                        <img src="SeverModul/screenshots/admin-knowledge-base.png" alt="Административная панель SeverModul со списком записей базы знаний" loading="lazy">
+                        <figcaption>Админ-панель: управление базой знаний в тестовой среде</figcaption>
+                      </figure>
+                      <figure>
+                        <img src="SeverModul/screenshots/telegram-notification-redacted.png" alt="Обезличенное уведомление о новой заявке в Telegram" loading="lazy">
+                        <figcaption>Тестовое уведомление о заявке в Telegram; контактные данные скрыты</figcaption>
+                      </figure>
                     </div>
                     <h4>Примечание</h4>
-                    <p>Содержимое базы знаний демонстрационное и требует проверки; ответы не следует воспринимать как подтверждённые условия реальной компании.</p>
+                    <p>База знаний содержит демонстрационные материалы и требует проверки; ответы не следует воспринимать как подтверждённые условия реальной компании. Проект демонстрационный и не описывается как заказ для реального клиента.</p>
                     <div class="project-detail-links">
                       <a href="https://moduldoma.netlify.app/" target="_blank" rel="noopener noreferrer">Демо-сайт <span aria-hidden="true">↗</span></a>
                       <a href="https://github.com/tsurkaneleonora-hash/SeverModul" target="_blank" rel="noopener noreferrer">GitHub-репозиторий <span aria-hidden="true">↗</span></a>
@@ -489,6 +505,13 @@
                     <p>Ошибки с правами доступа к Gradle решены добавлением прав на Gradle. Несовпадение версии JDK устранено обновлением до версии 21.</p>
                     <h4>Результат</h4>
                     <p>APK успешно собран и доступен для скачивания.</p>
+                    <h4>Интерфейс приложения</h4>
+                    <div class="project-screenshots">
+                      <figure>
+                        <img src="FinanceTreker/screenshots/overview.png" alt="Главный экран FinanceTreker с балансом, доходами и расходами" loading="lazy">
+                        <figcaption>Главный экран финансового трекера</figcaption>
+                      </figure>
+                    </div>
                     <div class="project-detail-links">
                       <a href="https://github.com/tsurkaneleonora-hash/FinanceTreker" target="_blank" rel="noopener noreferrer">GitHub-репозиторий <span aria-hidden="true">↗</span></a>
                       <a href="https://github.com/tsurkaneleonora-hash/FinanceTreker/raw/refs/heads/master/apk/app-debug.apk" target="_blank" rel="noopener noreferrer">Скачать APK <span aria-hidden="true">↓</span></a>
